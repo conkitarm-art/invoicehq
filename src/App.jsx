@@ -1,4 +1,6 @@
 import { useState, useRef } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 // ============================================================
 // 🔧 CONFIGURATION — Replace with your Lemon Squeezy links
@@ -438,63 +440,35 @@ function InvoiceApp({ isPro, invoicesUsed, onDownload, setShowUpgradeModal }) {
   const removeItem = (id) => setItems(items.filter((i) => i.id !== id));
   const updateItem = (id, key, val) => setItems(items.map((i) => (i.id === id ? { ...i, [key]: val } : i)));
 
-  const handlePrint = () => {
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handlePrint = async () => {
     const allowed = onDownload();
     if (!allowed) return;
-    const win = window.open("", "_blank");
-    win.document.write(`<!DOCTYPE html><html><head>
-      <title>${invoiceNum}</title>
-      <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap');
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Outfit',sans-serif;background:#fff;color:#1a1a1a;padding:48px;max-width:800px;margin:0 auto}
-        .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px;padding-bottom:32px;border-bottom:3px solid #D4A84B}
-        .brand{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700}
-        .inv-num{font-family:'Cormorant Garamond',serif;font-size:20px;color:#D4A84B;font-weight:600;text-align:right}
-        .badge{display:inline-block;background:#D4A84B22;color:#D4A84B;border:1px solid #D4A84B;padding:3px 12px;border-radius:20px;font-size:11px;margin-top:6px}
-        .meta{font-size:12px;color:#888;text-align:right;margin-top:4px}
-        .parties{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:40px}
-        .party-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#D4A84B;margin-bottom:8px;font-weight:600}
-        .party-name{font-size:17px;font-weight:600;margin-bottom:4px}
-        .party-info{font-size:13px;color:#666;margin-bottom:3px}
-        table{width:100%;border-collapse:collapse;margin-bottom:32px}
-        th{background:#1a1a1a;color:#fff;padding:12px 16px;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:left;font-weight:500}
-        th:last-child{text-align:right}
-        td{padding:14px 16px;border-bottom:1px solid #f0f0f0;font-size:14px}
-        td:last-child{text-align:right;font-weight:500}
-        tr:nth-child(even) td{background:#fafafa}
-        .totals{margin-left:auto;width:300px}
-        .t-row{display:flex;justify-content:space-between;padding:10px 0;font-size:14px;border-bottom:1px solid #f0f0f0;color:#555}
-        .t-grand{display:flex;justify-content:space-between;padding:14px 0;font-size:22px;font-weight:700;border-top:2px solid #D4A84B;color:#1a1a1a}
-        .t-grand .gl{font-family:'Cormorant Garamond',serif}
-        .t-grand .gv{color:#D4A84B}
-        .notes{margin-top:40px;padding:20px;background:#fafafa;border-left:3px solid #D4A84B;font-size:13px;color:#666;line-height:1.6}
-        .footer{margin-top:48px;text-align:center;font-size:11px;color:#ccc;padding-top:20px;border-top:1px solid #eee}
-      </style>
-    </head><body>
-      <div class="header">
-        <div><div class="brand">${from.name || "Your Name"}</div><div style="font-size:13px;color:#888;margin-top:4px">${from.email}</div><div style="font-size:13px;color:#888">${from.address}${from.city ? ", " + from.city : ""}</div></div>
-        <div><div class="inv-num">${invoiceNum}</div>${recurrence !== "None" ? `<div style="text-align:right"><span class="badge">↻ ${recurrence}</span></div>` : ""}<div class="meta">Issued: ${issueDate}</div>${dueDate ? `<div class="meta">Due: ${dueDate}</div>` : ""}</div>
-      </div>
-      <div class="parties">
-        <div><div class="party-label">From</div><div class="party-name">${from.name || "—"}</div><div class="party-info">${from.email}</div><div class="party-info">${from.address}</div><div class="party-info">${from.city}</div></div>
-        <div><div class="party-label">Bill To</div><div class="party-name">${to.name || "—"}</div><div class="party-info">${to.email}</div><div class="party-info">${to.address}</div><div class="party-info">${to.city}</div></div>
-      </div>
-      <table>
-        <thead><tr><th>Description</th><th style="text-align:center">Qty</th><th style="text-align:right">Rate</th><th>Amount</th></tr></thead>
-        <tbody>${items.map((item, i) => `<tr><td>${item.desc || "—"}</td><td style="text-align:center">${item.qty}</td><td style="text-align:right">${fmt(item.rate)}</td><td style="text-align:right;font-weight:500">${fmt(item.qty * item.rate)}</td></tr>`).join("")}</tbody>
-      </table>
-      <div class="totals">
-        <div class="t-row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
-        <div class="t-row"><span>Tax (${taxRate}%)</span><span>${fmt(taxAmount)}</span></div>
-        <div class="t-grand"><span class="gl">Total</span><span class="gv">${fmt(total)}</span></div>
-      </div>
-      ${notes ? `<div class="notes"><strong style="color:#1a1a1a;display:block;margin-bottom:6px">Notes & Terms</strong>${notes}</div>` : ""}
-      <div class="footer">Generated with InvoicePro · invoicepro.com</div>
-    </body></html>`);
-    win.document.close();
-    win.focus();
-    setTimeout(() => { win.print(); win.close(); }, 400);
+    setIsGenerating(true);
+    try {
+      const element = printRef.current;
+      const canvas = await html2canvas(element, {
+        scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgHeight = (canvas.height * pageWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+      pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeight);
+      heightLeft -= pageHeight;
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      pdf.save(`${invoiceNum || "invoice"}.pdf`);
+    } catch (err) { console.error("PDF error:", err); }
+    setIsGenerating(false);
   };
 
   const inputStyle = { width: "100%", background: G.input, border: `1px solid ${G.inputBorder}`, borderRadius: 10, padding: "10px 14px", color: G.text, fontSize: 14, transition: "border-color 0.2s" };
@@ -520,8 +494,8 @@ function InvoiceApp({ isPro, invoicesUsed, onDownload, setShowUpgradeModal }) {
               {t === "editor" ? "✏️ Editor" : "👁 Preview"}
             </button>
           ))}
-          <button onClick={handlePrint} style={{ padding: "9px 24px", borderRadius: 9, border: "none", background: G.gold, color: "#1a1a1a", fontSize: 14, fontWeight: 700, boxShadow: `0 4px 16px ${G.gold}33` }}>
-            ↓ Download PDF
+          <button onClick={handlePrint} disabled={isGenerating} style={{ padding: "9px 24px", borderRadius: 9, border: "none", background: isGenerating ? "#b8863c" : G.gold, color: "#1a1a1a", fontSize: 14, fontWeight: 700, boxShadow: `0 4px 16px ${G.gold}33`, opacity: isGenerating ? 0.8 : 1 }}>
+            {isGenerating ? "⏳ Generating..." : "↓ Download PDF"}
           </button>
         </div>
       </div>
@@ -604,7 +578,7 @@ function InvoiceApp({ isPro, invoicesUsed, onDownload, setShowUpgradeModal }) {
         <div>
           {activeTab === "preview" && (
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-              <button onClick={handlePrint} style={{ padding: "12px 32px", background: G.gold, border: "none", borderRadius: 12, color: "#1a1a1a", fontSize: 15, fontWeight: 700 }}>↓ Download PDF</button>
+              <button onClick={handlePrint} disabled={isGenerating} style={{ padding: "12px 32px", background: isGenerating ? "#b8863c" : G.gold, border: "none", borderRadius: 12, color: "#1a1a1a", fontSize: 15, fontWeight: 700 }}>{isGenerating ? "⏳ Generating..." : "↓ Download PDF"}</button>
             </div>
           )}
           <div ref={printRef} style={{ background: "#fff", borderRadius: 16, padding: "clamp(24px, 4vw, 48px)", boxShadow: `0 0 60px ${G.gold}18`, color: "#1a1a1a", fontFamily: "'Outfit', sans-serif" }}>
