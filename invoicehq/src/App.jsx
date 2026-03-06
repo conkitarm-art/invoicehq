@@ -296,9 +296,164 @@ function LandingPage({ setPage }) {
         </button>
       </div>
 
+
+      {/* Articles Section */}
+      <ArticlesSection />
+
       {/* Footer */}
       <div style={{ borderTop: `1px solid ${G.border}`, padding: "24px", textAlign: "center", fontSize: 13, color: G.muted }}>
         © 2026 InvoicePro · Built for Freelancers Worldwide 🌍
+      </div>
+    </div>
+  );
+}
+
+
+// ─────────────────────────────────────────────
+// ARTICLES SECTION
+// ─────────────────────────────────────────────
+function ArticlesSection() {
+  const [expanded, setExpanded] = useState(null);
+
+  const articles = [
+    {
+      num: "01",
+      title: "How to Create a Professional Invoice in 60 Seconds",
+      summary: "A professional invoice is the difference between getting paid on time and chasing clients for weeks. Here is exactly what every freelance invoice must include.",
+      body: `Every professional freelance invoice must contain: your full name and contact details, the client's name and billing info, a unique invoice number (e.g. INV-001), the issue date and payment due date, an itemized list of services with quantities and rates, subtotal, tax amount, and total, and clear payment instructions.
+
+The most important rule: always set a due date. Invoices with a due date get paid 3x faster than those without. Net 14 (14 days) is standard for most freelancers. Net 30 works for larger agencies and corporations.
+
+Once your invoice is ready, download it as a PDF from InvoiceHQ and send it to your client immediately — never wait until end of month. The sooner you invoice, the sooner you get paid.`,
+    },
+    {
+      num: "02",
+      title: "Multi-Currency Invoicing: How to Bill International Clients",
+      summary: "Working with clients from the US, UK, or UAE? Here is how to invoice them in their currency, handle exchange rates, and receive money from anywhere in the world.",
+      body: `Always invoice in the currency your client is most comfortable with. US clients expect USD, European clients prefer EUR, and UAE clients use AED. InvoiceHQ supports 10+ currencies including USD, EUR, GBP, INR, PKR, AED, CAD, AUD, JPY, and CHF.
+
+On exchange rates: do not put conversion rates on the invoice itself. Simply invoice in their preferred currency and let your payment processor (Payoneer, Wise, or PayPal) handle the conversion when you withdraw.
+
+For tax on international invoices: if you are providing services to a business outside your country, you typically do not charge VAT or GST. This is called "zero-rated export of services." However, rules vary — always consult a local accountant for your specific situation.
+
+Best platforms to receive international payments: Payoneer (works in 200+ countries, low fees), Wise (best exchange rates), PayPal (widely accepted, higher fees of 3-5%).`,
+    },
+    {
+      num: "03",
+      title: "The Freelancer's Guide to Setting Rates That Get Paid",
+      summary: "Most freelancers underprice themselves by 40-60%. Use this proven formula to calculate your correct rate and stop leaving money on the table.",
+      body: `Use this formula to find your minimum hourly rate:
+
+Minimum Rate = (Monthly Expenses + Desired Profit) ÷ Billable Hours Per Month
+
+Example: $2,000 expenses + $1,500 profit = $3,500 needed. At 80 billable hours, your floor is $43.75/hour. Your actual rate should be 30-50% higher to cover taxes, unpaid admin time, and slow months.
+
+Hourly vs Project rates: Project rates almost always earn you more. When you get faster at your work, you earn more per hour — without the client seeing your rate increase. Switch to project-based pricing as soon as you have enough experience to estimate accurately.
+
+Rate benchmarks for 2026: UI/UX Designers earn $50–$150/hour, Web Developers $60–$200/hour, Content Writers $0.10–$0.50 per word, Social Media Managers $500–$3,000/month per client, SEO Specialists $75–$150/hour.
+
+How to raise your rates without losing clients: give 30 days notice, frame it as an annual review, and raise rates for new clients first. If a client leaves over a modest rate increase, they were never a sustainable long-term client.`,
+    },
+    {
+      num: "04",
+      title: "How to Follow Up on Unpaid Invoices (With Email Templates)",
+      summary: "Chasing late payments is uncomfortable but necessary. These professional email templates and timing strategies will get you paid without damaging client relationships.",
+      body: `Follow this timing schedule for maximum results:
+- Day 0: Send invoice immediately after completing work
+- 3 days before due date: Send a friendly reminder
+- 1 day after due date: Send a polite follow-up
+- 7 days overdue: Send a firm reminder
+- 14 days overdue: Send a final notice with late fee warning
+
+Template for a friendly reminder (3 days before due):
+"Hi [Client], just a quick reminder that Invoice #INV-001 for $[Amount] is due on [Date]. Please let me know if you have any questions. Best, [Your Name]"
+
+Template for a firm reminder (7 days overdue):
+"Hi [Client], Invoice #INV-001 for $[Amount] is now 7 days past due. Could you please confirm when payment will be processed? I would appreciate a response by end of week. Thank you, [Your Name]"
+
+Always attach the original invoice PDF to every follow-up. Clients often claim they never received the invoice — make it impossible for them to use that excuse.
+
+Prevention is better than chasing: require a 50% deposit before starting any new project, and add a 1.5% monthly late fee clause to your invoice terms.`,
+    },
+    {
+      num: "05",
+      title: "Recurring Invoices: How to Set Up Reliable Retainer Income",
+      summary: "Retainer clients who pay monthly are the backbone of a sustainable freelance business. Here is how to structure recurring invoices and lock in predictable income.",
+      body: `A retainer is a fixed monthly fee a client pays for ongoing access to your services. It is the holy grail of freelancing because it provides predictable income, removes the constant need to find new clients, and builds deeper, more valuable client relationships.
+
+How to pitch a retainer: after completing a successful project, say "I have enjoyed working on this. Would you be interested in a monthly retainer to have me available on an ongoing basis? For $[X]/month I can cover [specific deliverables]."
+
+Retainer pricing: charge at least your full hourly rate multiplied by estimated monthly hours, plus a 10-20% premium for the commitment and priority access you are providing.
+
+Using recurring invoices in InvoiceHQ: select your billing frequency (Weekly, Bi-weekly, Monthly, Quarterly) in the Recurring field. Your invoice PDF will show the recurrence badge so clients always know when to expect the next invoice.
+
+Pro tip: always define exactly what is included in the retainer scope. Scope creep — clients adding more and more work to a fixed retainer — is the number one reason retainers fail.`,
+    },
+    {
+      num: "06",
+      title: "Invoice vs Receipt vs Quote: What Is the Difference?",
+      summary: "Many freelancers confuse invoices, receipts, and quotes. Each document serves a different legal and financial purpose. Here is when to use each one.",
+      body: `A Quote (or Estimate) is sent BEFORE work begins. It tells the client what the work will cost. It is not a request for payment — it is an offer. Quotes are typically valid for 30 days.
+
+An Invoice is sent AFTER work is completed (or at agreed milestones). It is a formal request for payment. Invoices are legally binding documents that create a record of the transaction and can be used in legal disputes over non-payment.
+
+A Receipt is issued AFTER payment is received. It confirms the client has paid and the transaction is complete. Receipts are important for the client's accounting records.
+
+The correct workflow is: Quote → Client approves → Do the work → Invoice → Client pays → Receipt.
+
+For legal protection, always keep copies of all three documents for every project. If a client ever disputes a payment, you need the paper trail from quote to receipt to prove your case.
+
+Tax tip: invoices are the primary document your accountant needs to calculate your taxable income. Keep all invoices — paid and unpaid — organized by year for easy tax filing.`,
+    },
+  ];
+
+  return (
+    <div style={{ borderTop: \`1px solid \${G.border}\`, padding: "80px 24px" }}>
+      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+
+        {/* Section Header */}
+        <div style={{ marginBottom: 48 }}>
+          <div style={{ display: "inline-block", background: G.goldDim, border: \`1px solid \${G.goldBorder}\`, borderRadius: 20, padding: "5px 16px", fontSize: 12, color: G.gold, letterSpacing: 1, marginBottom: 16, textTransform: "uppercase" }}>
+            ✦ Freelancer Knowledge Base
+          </div>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(28px, 5vw, 42px)", fontWeight: 700, color: "#fff", marginBottom: 12 }}>
+            The Freelancer's Invoice Playbook
+          </h2>
+          <p style={{ color: G.muted, fontSize: 16, maxWidth: 560 }}>
+            Everything you need to know about invoicing, getting paid, and running a professional freelance business.
+          </p>
+        </div>
+
+        {/* Articles */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {articles.map((a, i) => (
+            <div key={i}
+              style={{ borderTop: \`1px solid \${expanded === i ? G.goldBorder : G.border}\`, background: expanded === i ? G.goldDim : "transparent", borderRadius: expanded === i ? 12 : 0, overflow: "hidden", transition: "all 0.3s" }}
+            >
+              {/* Article Header — always visible */}
+              <div
+                onClick={() => setExpanded(expanded === i ? null : i)}
+                style={{ display: "flex", alignItems: "center", gap: 20, padding: "24px 20px", cursor: "pointer" }}
+              >
+                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 700, color: expanded === i ? G.gold : G.border, minWidth: 40, transition: "color 0.3s" }}>{a.num}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 17, fontWeight: 600, color: "#fff", marginBottom: 4 }}>{a.title}</div>
+                  <div style={{ fontSize: 13, color: G.muted, lineHeight: 1.5 }}>{a.summary}</div>
+                </div>
+                <span style={{ color: expanded === i ? G.gold : G.muted, fontSize: 22, transition: "transform 0.3s, color 0.3s", transform: expanded === i ? "rotate(45deg)" : "rotate(0)", flexShrink: 0 }}>+</span>
+              </div>
+
+              {/* Expanded Body */}
+              {expanded === i && (
+                <div style={{ padding: "0 20px 28px 80px" }}>
+                  {a.body.split("\n\n").map((para, j) => (
+                    <p key={j} style={{ fontSize: 15, color: G.subtle, lineHeight: 1.8, marginBottom: 16 }}>{para}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
