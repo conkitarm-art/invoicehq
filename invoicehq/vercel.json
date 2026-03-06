@@ -1,11 +1,3 @@
 {
-  "rewrites": [
-    { "source": "/((?!googlee53162af03a9550b.html).*)", "destination": "/index.html" }
-  ],
-  "headers": [
-    {
-      "source": "/googlee53162af03a9550b.html",
-      "headers": [{ "key": "Content-Type", "value": "text/html" }]
-    }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
